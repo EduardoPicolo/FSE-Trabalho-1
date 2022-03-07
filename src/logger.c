@@ -11,13 +11,16 @@ void openLogFile()
     if ((logfile = fopen("src/log.csv", "a")) == NULL)
     {
         printf("Error opening log file");
-        exit(1);
+        // exit(1);
     }
 }
 
 void logger(float ti, float te, float tr, float cs)
 {
     openLogFile();
+    if (logfile == NULL)
+        return;
+
     struct timeval tv;
     time_t t;
     struct tm *info;
@@ -29,7 +32,7 @@ void logger(float ti, float te, float tr, float cs)
     info = localtime(&t);
 
     strftime(buffer, sizeof buffer, "%d-%m-%Y %H:%M:%S", info); // datetime
-    printf("%s", buffer);
+    // printf("%s", buffer);
 
     fprintf(logfile, "%s, %f, %f, %f, %f\n", buffer, ti, te, tr, cs);
 

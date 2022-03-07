@@ -81,18 +81,17 @@ void handle_command(int command)
 void control()
 {
     // controller.uart_filestream = uart_filestream;
-    unsigned char temperature_code[7] = {SERVER_CODE, CMD_CODE, GET_TEMPERATURE, MATRICULA};
-    unsigned char potenciometro_code[7] = {SERVER_CODE, CMD_CODE, GET_POTENCIOMETRO, MATRICULA};
-
     unsigned char control_signal[11] = {SERVER_CODE, SEND_COMMAND_CODE, SEND_CONTROL_SIGNAL, MATRICULA};
+    unsigned char potenciometro_code[7] = {SERVER_CODE, CMD_CODE, GET_POTENCIOMETRO, MATRICULA};
+    unsigned char temperature_code[7] = {SERVER_CODE, CMD_CODE, GET_TEMPERATURE, MATRICULA};
     unsigned char temperature_reference[11] = {SERVER_CODE, SEND_COMMAND_CODE, SEND_REF_SIGNAL, MATRICULA};
 
     struct bme280_data bme_data;
-    float internal_temperature;
     float potenciometro_value;
     float ref_curve_value;
     float control_output;
     int INT_control_output = 0;
+    float internal_temperature;
 
     write_uart(controller.uart_filestream, temperature_code, 7);
     read_data(controller.uart_filestream, temperature_code, &internal_temperature, 4);
@@ -201,7 +200,7 @@ void controller_routine()
     {
         control();
         get_command();
-        usleep(WAIT_TIME);
+        usleep(750000);
         // sleep(1);
     }
 }
