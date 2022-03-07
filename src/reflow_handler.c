@@ -23,11 +23,11 @@ void openFile()
 void readFile()
 {
     char buffer[20];
-    int time, i = 0;
-    float temp;
-    fscanf(file, " %[^\n]", buffer);
-    while (fscanf(file, " %d, %f", &time, &temp) != EOF)
+    float time, temp;
+    int i = 0;
+    while (fscanf(file, "%f,%f", &time, &temp) != EOF)
     {
+        // printf("%f, %f\n", time, temp);
         curva[i][0] = time;
         curva[i][1] = temp;
         i++;
