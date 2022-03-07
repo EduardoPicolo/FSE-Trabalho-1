@@ -14,11 +14,15 @@ typedef struct CONTROLLER
 } CONTROLLER;
 
 void set_mode(int mode);
-void controller_routine(int *uart_filestream);
+void set_system_state(int state);
+void set_uart_filestream(int *uart_filestream);
+void controller_routine();
 void control();
 void get_command();
 void send_status();
+
 void send_mode();
+
 void cooldown(int time);
 
 #endif /* CONTROLLER_H */

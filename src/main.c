@@ -22,6 +22,7 @@ int uart0;
 
 void handle_sigint()
 {
+    set_system_state(0);
     power_off();
     close_bme();
     close_uart(&uart0);
@@ -40,25 +41,25 @@ int main(int argc, const char *argv[])
     printf("Escolha o modo para a temperatura de referencia: ");
     scanf("%d", &mode);
 
-    set_mode(mode);
     if (mode == 2)
     {
         double tr;
         printf("Temperatura de referencia: ");
         scanf("%lf", &tr);
+        printf("INPUTED REFERENCE: %f\n", tr);
         pid_set_reference(tr);
+        set_mode(2);
     }
     else if (mode == 0)
     {
-        int byte = 0;
-        send_mode(&byte);
+        set_mode(0);
     }
     else if (mode == 1)
     {
-        int byte = 1;
-        send_mode(&byte);
+        set_mode(1);
     }
 
+    set_system_state(1);
     pid_configura_constantes(30.0, 0.2, 400.0);
 
     init_uart(&uart0);
@@ -69,26 +70,8 @@ int main(int argc, const char *argv[])
 
     dry_run();
 
-    if (mode == 2)
-    {
-        double tr;
-        printf("Temperatura de referencia: ");
-        scanf("%lf", &tr);
-        pid_set_reference(tr);
-    }
-    else if (mode == 0)
-    {
-        int byte = 0;
-        send_mode(&byte);
-    }
-    else if (mode == 1)
-    {
-        int byte = 1;
-        send_mode(&byte);
-    }
-
     printf("\nStart Controller\n");
-    controller_routine(&uart0);
+    controller_routine();
 
     close_uart(&uart0);
 }

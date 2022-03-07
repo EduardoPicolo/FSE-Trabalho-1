@@ -17,13 +17,13 @@ void display_temperatures(float it, float et, float rt, int mode)
     else if (mode == 2)
         typeln("TERMINAL");
 
-    typeln("TR:");
+    typeln(" TR:");
     typeFloat(rt);
 
     lcdLoc(LINE2);
     typeln("TI:");
     typeFloat(it);
 
-    typeln("TE:");
+    typeln(" TE:");
     typeFloat(et);
 }

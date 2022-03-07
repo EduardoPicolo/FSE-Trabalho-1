@@ -6,11 +6,13 @@
 #include <unistd.h>  //Used for UART
 #include <fcntl.h>   //Used for UART
 #include <termios.h> //Used for UART
+#include "controller.h"
 
 void init_uart(int *uart_filestream)
 {
     setup_start(uart_filestream);
     configure_uart(uart_filestream);
+    set_uart_filestream(uart_filestream);
 }
 
 void setup_start(int *uart_filestream)
