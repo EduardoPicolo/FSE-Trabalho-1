@@ -17,6 +17,7 @@
 #include "display.h"
 #include "bme280_handler.h"
 #include "reflow_handler.h"
+#include "logger.h"
 
 CONTROLLER controller = {NULL, 0, 0, 0, 0, 0, {0.0, 0.0, 0.0}};
 
@@ -98,6 +99,8 @@ void control()
 
     bme_data = get_sensor_data();
 
+    control_output = pid_controle(average_temperature(internal_temperature));
+
     // Potenciometro
     if (controller.ref_mode == 0)
     {
@@ -105,6 +108,7 @@ void control()
         read_data(controller.uart_filestream, potenciometro_code, &potenciometro_value, 4);
         pid_atualiza_referencia(potenciometro_value);
         display_temperatures(internal_temperature, bme_data.temperature, potenciometro_value, controller.ref_mode);
+        logger(internal_temperature, bme_data.temperature, potenciometro_value, control_output);
     }
     // Curva reflow
     else if (controller.ref_mode == 1)
@@ -114,6 +118,7 @@ void control()
         memcpy(&temperature_reference[7], &ref_curve_value, 4);
         write_uart(controller.uart_filestream, temperature_reference, 11);
         display_temperatures(internal_temperature, bme_data.temperature, ref_curve_value, controller.ref_mode);
+        logger(internal_temperature, bme_data.temperature, ref_curve_value, control_output);
     }
     // Terminal
     else if (controller.ref_mode == 2)
@@ -123,9 +128,8 @@ void control()
         memcpy(&temperature_reference[7], &temp, 4);
         write_uart(controller.uart_filestream, temperature_reference, 11);
         display_temperatures(internal_temperature, bme_data.temperature, temp, controller.ref_mode);
+        logger(internal_temperature, bme_data.temperature, temp, control_output);
     }
-
-    control_output = pid_controle(average_temperature(internal_temperature));
 
     if (control_output > 0)
     {
@@ -200,6 +204,6 @@ void controller_routine()
             control();
         }
         get_command();
-        sleep(1);
+        usleep(WAIT_TIME);
     }
 }

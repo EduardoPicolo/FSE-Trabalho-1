@@ -18,6 +18,7 @@
 #include <wiringPi.h>
 #include <softPwm.h>
 #include "reflow_handler.h"
+#include "logger.h"
 
 int uart0;
 
@@ -33,7 +34,38 @@ void handle_sigint()
 
 int main(int argc, const char *argv[])
 {
-    int mode;
+    openLogFile();
+
+    int mode, constants;
+    double ki, kp, kd;
+
+    printf("Escolha as constantes:  \n");
+    printf("[0] Rasp42\n");
+    printf("[1] Rasp43\n");
+    printf("[2] Customizado\n");
+    scanf("%d", &constants);
+
+    switch (constants)
+    {
+    case 0:
+        pid_configura_constantes(30.0, 0.2, 400.0);
+        break;
+    case 1:
+        pid_configura_constantes(20.0, 0.1, 100.0);
+        break;
+    case 2:
+        printf("Digite o valor de Kp: ");
+        scanf("%lf", &kp);
+        printf("Digite o valor de Ki: ");
+        scanf("%lf", &ki);
+        printf("Digite o valor de Kd: ");
+        scanf("%lf", &kd);
+        pid_configura_constantes(kp, ki, kd);
+        break;
+
+    default:
+        break;
+    }
 
     printf("Escolha o modo para a temperatura de referencia (TR):\n");
     printf("[0] Potenciometro\n");
@@ -61,7 +93,6 @@ int main(int argc, const char *argv[])
     }
 
     set_system_state(1);
-    pid_configura_constantes(30.0, 0.2, 400.0);
 
     init_uart(&uart0);
     init_gpio();

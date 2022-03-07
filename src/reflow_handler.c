@@ -22,7 +22,6 @@ void openFile()
 
 void readFile()
 {
-    char buffer[20];
     float time, temp;
     int i = 0;
     while (fscanf(file, "%f,%f", &time, &temp) != EOF)
