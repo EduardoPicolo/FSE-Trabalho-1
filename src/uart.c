@@ -118,9 +118,7 @@ int read_bytes(int *uart_filestream, void *buffer, int size)
     return size;
 }
 
-//
 int read_data(int *uart_filestream, unsigned char *code, void *data, int size)
-// int read_data(int uart, unsigned char *comando, void *dado, int tamanho_dado)
 {
     unsigned char rx_buffer[255];
     short crc_received;

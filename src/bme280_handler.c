@@ -139,11 +139,11 @@ struct bme280_data get_sensor_data()
         exit(1);
     }
 
-#ifdef BME280_FLOAT_ENABLE
-    printf("%0.2f, %0.2f, %0.2f\r\n", data.temperature, data.pressure, data.humidity);
-#else
-    printf("%ld, %ld, %ld\r\n", data.temperature, data.pressure, data.humidity);
-#endif
+    // #ifdef BME280_FLOAT_ENABLE
+    //     printf("%0.2f, %0.2f, %0.2f\r\n", data.temperature, data.pressure, data.humidity);
+    // #else
+    //     printf("%ld, %ld, %ld\r\n", data.temperature, data.pressure, data.humidity);
+    // #endif
 
     return data;
 }

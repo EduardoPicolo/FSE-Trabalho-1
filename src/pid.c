@@ -15,31 +15,38 @@ struct PID
     double erro_anterior;
     double sinal_de_controle_MAX;
     double sinal_de_controle_MIN;
-} pid = {0, 0, 0, 0, 0, 0, 1.0, 0, 0, 0, 60, 30};
+} pid = {0, 0, 0, 0, 0, 0, 0.5, 0, 0, 0, 100, -100};
 
 typedef struct PID PID;
 
-void pid_configura_constantes(double Kp_, double Ki_, double Kd_)
+void pid_set_reference(double reference)
 {
-    pid.Kp = Kp_;
-    pid.Ki = Ki_;
-    pid.Kd = Kd_;
+    pid.referencia = reference;
 }
 
-void pid_atualiza_referencia(float referencia_)
+double pid_get_reference()
 {
-    pid.referencia = (double)referencia_;
+    return pid.referencia;
+}
+
+void pid_configura_constantes(double Kp, double Ki, double Kd)
+{
+    pid.Kp = Kp;
+    pid.Ki = Ki;
+    pid.Kd = Kd;
+}
+
+void pid_atualiza_referencia(double referencia)
+{
+    pid.referencia = referencia;
 }
 
 double pid_controle(double saida_medida)
 {
+
     double erro = pid.referencia - saida_medida;
 
-    printf("Saida: \t Ref: \t Erro \t Erro Acum \t Erro (CAP) \t Erro Ant. \t Delta Erro \t Sinal Controle\n");
-
-    pid.erro_total += erro;
-
-    printf("%.2f\t %.2f\t %.2f\t %.2f\t", saida_medida, pid.referencia, erro, pid.erro_total);
+    pid.erro_total += erro; // Acumula o erro (Termo Integral)
 
     if (pid.erro_total >= pid.sinal_de_controle_MAX)
     {
@@ -49,12 +56,8 @@ double pid_controle(double saida_medida)
     {
         pid.erro_total = pid.sinal_de_controle_MIN;
     }
-    printf("\t%.2f\t", pid.erro_total);
 
     double delta_error = erro - pid.erro_anterior; // Diferença entre os erros (Termo Derivativo)
-    pid.erro_anterior = erro;
-
-    printf("\t%.2f\t \t%.2f\t", pid.erro_anterior, delta_error);
 
     pid.sinal_de_controle = pid.Kp * erro + (pid.Ki * pid.T) * pid.erro_total + (pid.Kd / pid.T) * delta_error; // PID calcula sinal de controle
 
@@ -67,7 +70,7 @@ double pid_controle(double saida_medida)
         pid.sinal_de_controle = pid.sinal_de_controle_MIN;
     }
 
-    printf("\t%.2f\n", pid.sinal_de_controle);
+    pid.erro_anterior = erro;
 
     return pid.sinal_de_controle;
 }

@@ -12,11 +12,10 @@ void display_temperatures(float it, float et, float rt, int mode)
     lcd_init();
     ClrLcd();
     lcdLoc(LINE1);
-    typeln("MODE:");
-    if (mode == 0)
-        typeln("POT");
-    else if (mode == 1)
-        typeln("CURVA");
+    if (mode == 0 || mode == 1)
+        typeln("UART");
+    else if (mode == 2)
+        typeln("TERMINAL");
 
     typeln("TR:");
     typeFloat(rt);

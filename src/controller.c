@@ -19,6 +19,11 @@
 
 struct CONTROLLER controller = {NULL, 0, 0, 0, 0, 0, 0, {0.0, 0.0, 0.0}};
 
+void set_mode(int mode)
+{
+    controller.ref_mode = mode;
+}
+
 float average_temperature(float current_temperature)
 {
     controller.temperature_history[0] = controller.temperature_history[1];
@@ -81,13 +86,13 @@ void handle_command(int command)
     case CMD_REF_POTENCIOMETRO:
         printf("Reference: Potenciômetro\n");
         controller.ref_mode = 0;
-        send_ref();
+        send_mode(controller.ref_mode);
         break;
     case CMD_REF_CURVE:
         printf("Reference: Curva\n");
         controller.ref_mode = 1;
         controller.count_ref = 0;
-        send_ref();
+        send_mode(controller.ref_mode);
         break;
 
     default:
@@ -101,12 +106,12 @@ void control()
     unsigned char temperature_code[7] = {SERVER_CODE, CMD_CODE, GET_TEMPERATURE, MATRICULA};
     unsigned char potenciometro_code[7] = {SERVER_CODE, CMD_CODE, GET_POTENCIOMETRO, MATRICULA};
 
-    unsigned char control_code[11] = {SERVER_CODE, SEND_COMMAND_CODE, SEND_CONTROL_SIGNAL, MATRICULA};
-    unsigned char ref_code[11] = {SERVER_CODE, SEND_COMMAND_CODE, SEND_REF_SIGNAL, MATRICULA};
+    unsigned char control_signal[11] = {SERVER_CODE, SEND_COMMAND_CODE, SEND_CONTROL_SIGNAL, MATRICULA};
+    unsigned char temperature_reference[11] = {SERVER_CODE, SEND_COMMAND_CODE, SEND_REF_SIGNAL, MATRICULA};
 
     struct bme280_data bme_data;
     float internal_temperature;
-    float potenciometro_value; // temp referencia
+    float potenciometro_value;
     float ref_curve_value;
     float control_output;
     int INT_control_output = 0;
@@ -117,6 +122,7 @@ void control()
 
     bme_data = get_sensor_data();
 
+    // Potenciometro
     if (controller.ref_mode == 0)
     {
         write_uart(controller.uart_filestream, potenciometro_code, 7);
@@ -125,13 +131,24 @@ void control()
         pid_atualiza_referencia(potenciometro_value);
         display_temperatures(internal_temperature, bme_data.temperature, potenciometro_value, controller.ref_mode);
     }
-    else
+    // Curva reflow
+    else if (controller.ref_mode == 1)
     {
         ref_curve_value = get_curve_value();
         pid_atualiza_referencia(ref_curve_value);
-        memcpy(&ref_code[7], &ref_curve_value, 4);
-        write_uart(controller.uart_filestream, ref_code, 11);
+        memcpy(&temperature_reference[7], &ref_curve_value, 4);
+        write_uart(controller.uart_filestream, temperature_reference, 11);
         usleep(WAIT_TIME);
+    }
+    // Terminal
+    else if (controller.ref_mode == 2)
+    {
+        double temp;
+        temp = pid_get_reference();
+        memcpy(&temperature_reference[7], &temp, 4);
+        write_uart(controller.uart_filestream, temperature_reference, 11);
+        usleep(WAIT_TIME);
+        display_temperatures(internal_temperature, bme_data.temperature, temp, controller.ref_mode);
     }
 
     control_output = pid_controle(average_temperature(internal_temperature));
@@ -156,8 +173,8 @@ void control()
 
     INT_control_output = control_output;
 
-    memcpy(&control_code[7], &INT_control_output, 4);
-    write_uart(controller.uart_filestream, control_code, 11);
+    memcpy(&control_signal[7], &INT_control_output, 4);
+    write_uart(controller.uart_filestream, control_signal, 11);
     usleep(WAIT_TIME);
 }
 
@@ -189,11 +206,18 @@ void send_status()
     printf("Current status: %d\n", response);
 }
 
-void send_ref()
+void send_mode(int mode)
 {
     unsigned char ref_mode[11] = {SERVER_CODE, SEND_COMMAND_CODE, SEND_REF_MODE, MATRICULA};
-
-    char byte = (char)controller.ref_mode;
+    char byte;
+    if (mode == 0 || mode == 1)
+    {
+        byte = (char)mode;
+    }
+    else
+    {
+        byte = (char)controller.ref_mode;
+    }
     memcpy(&ref_mode[7], &byte, 1);
     write_uart(controller.uart_filestream, ref_mode, 8);
     usleep(WAIT_TIME);
@@ -205,6 +229,8 @@ void send_ref()
 void controller_routine(int *uart_filestream)
 {
     controller.uart_filestream = uart_filestream;
+    controller.on_off_state = 1;
+    send_status();
 
     while (1)
     {
@@ -213,6 +239,6 @@ void controller_routine(int *uart_filestream)
             control(uart_filestream);
         }
         get_command();
-        sleep(1);
+        // sleep(1);
     }
 }

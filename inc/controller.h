@@ -13,11 +13,12 @@ typedef struct CONTROLLER
     float temperature_history[3];
 } CONTROLLER;
 
+void set_mode(int mode);
 void controller_routine(int *uart_filestream);
 void control();
 void get_command();
 void send_status();
-void send_ref();
+void send_mode();
 void cooldown(int time);
 
 #endif /* CONTROLLER_H */

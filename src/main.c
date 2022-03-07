@@ -30,6 +30,37 @@ void handle_sigint()
 
 int main(int argc, const char *argv[])
 {
+
+    int mode;
+
+    printf("Escolha o modo para a temperatura de referencia (TR):\n");
+    printf("[0] Potenciometro\n");
+    printf("[1] Curva Reflow\n");
+    printf("[2] Terminal\n");
+    printf("Escolha o modo para a temperatura de referencia: ");
+    scanf("%d", &mode);
+
+    set_mode(mode);
+    if (mode == 2)
+    {
+        double tr;
+        printf("Temperatura de referencia: ");
+        scanf("%lf", &tr);
+        pid_set_reference(tr);
+    }
+    else if (mode == 0)
+    {
+        int byte = 0;
+        send_mode(&byte);
+    }
+    else if (mode == 1)
+    {
+        int byte = 1;
+        send_mode(&byte);
+    }
+
+    pid_configura_constantes(30.0, 0.2, 400.0);
+
     init_uart(&uart0);
     init_gpio();
     init_bme();
@@ -38,8 +69,25 @@ int main(int argc, const char *argv[])
 
     dry_run();
 
+    if (mode == 2)
+    {
+        double tr;
+        printf("Temperatura de referencia: ");
+        scanf("%lf", &tr);
+        pid_set_reference(tr);
+    }
+    else if (mode == 0)
+    {
+        int byte = 0;
+        send_mode(&byte);
+    }
+    else if (mode == 1)
+    {
+        int byte = 1;
+        send_mode(&byte);
+    }
+
     printf("\nStart Controller\n");
-    pid_configura_constantes(30.0, 0.2, 400.0);
     controller_routine(&uart0);
 
     close_uart(&uart0);

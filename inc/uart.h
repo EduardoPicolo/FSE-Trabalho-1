@@ -26,7 +26,7 @@
 #define CMD_REF_POTENCIOMETRO 3
 #define CMD_REF_CURVE 4
 
-#define WAIT_TIME 100000
+#define WAIT_TIME 500000
 
 // SETUP UART
 void init_uart(int *);
