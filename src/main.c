@@ -34,8 +34,6 @@ void handle_sigint()
 
 int main(int argc, const char *argv[])
 {
-    openLogFile();
-
     int mode, constants;
     double ki, kp, kd;
 

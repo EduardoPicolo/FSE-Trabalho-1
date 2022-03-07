@@ -199,11 +199,9 @@ void controller_routine()
 
     while (1)
     {
-        if (controller.on_off_state)
-        {
-            control();
-        }
+        control();
         get_command();
         usleep(WAIT_TIME);
+        // sleep(1);
     }
 }

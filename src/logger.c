@@ -5,17 +5,10 @@
 #include <sys/time.h>
 
 FILE *logfile = NULL;
-// float curva[10][2];
-
-// void start_logger()
-// {
-//     openFile();
-//     readFile();
-// }
 
 void openLogFile()
 {
-    if ((logfile = fopen("src/log.csv", "w+")) == NULL)
+    if ((logfile = fopen("src/log.csv", "a")) == NULL)
     {
         printf("Error opening log file");
         exit(1);
@@ -24,6 +17,7 @@ void openLogFile()
 
 void logger(float ti, float te, float tr, float cs)
 {
+    openLogFile();
     struct timeval tv;
     time_t t;
     struct tm *info;
