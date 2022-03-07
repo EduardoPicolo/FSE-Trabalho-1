@@ -53,11 +53,11 @@ void deactivate_resistor()
     softPwmWrite(RESISTOR_PIN, 0);
 }
 
-void power_off()
+void gpio_power_off()
 {
-    printf("\n\t Shutting down GPIO... ");
+    printf("\nShutting down GPIO... ");
     softPwmStop(RESISTOR_PIN);
     softPwmStop(FAN_PIN);
     sleep(1);
-    printf("Closed.\n");
+    printf("✓\n");
 }

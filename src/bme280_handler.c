@@ -152,7 +152,7 @@ void close_bme()
 {
     if (FD > 0)
     {
-        printf("\tClosing i2c... ");
+        printf("Closing i2c... ");
         close(FD);
         printf("✓\n");
     }

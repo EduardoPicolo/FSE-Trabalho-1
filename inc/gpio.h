@@ -14,6 +14,6 @@ void deactivate_fan();
 void activate_resistor(int pwm);
 void deactivate_resistor();
 
-void power_off();
+void gpio_power_off();
 
 #endif /* GPIO_H_ */

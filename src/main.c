@@ -24,7 +24,8 @@ int uart0;
 void handle_sigint()
 {
     set_system_state(0);
-    power_off();
+    send_status();
+    gpio_power_off();
     close_bme();
     close_uart(&uart0);
     exit(0);
