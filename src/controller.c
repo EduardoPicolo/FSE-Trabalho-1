@@ -16,20 +16,9 @@
 #include "pid.h"
 #include "display.h"
 #include "bme280_handler.h"
+#include "reflow_handler.h"
 
-struct CONTROLLER controller = {NULL, 0, 0, 0, 0, 0, 0, {0.0, 0.0, 0.0}};
-
-int curva[10][2] = {
-    {0, 25},
-    {60, 38},
-    {120, 46},
-    {240, 54},
-    {260, 57},
-    {300, 61},
-    {360, 63},
-    {420, 54},
-    {480, 33},
-    {600, 25}};
+CONTROLLER controller = {NULL, 0, 0, 0, 0, 0, {0.0, 0.0, 0.0}};
 
 void set_mode(int mode)
 {
@@ -52,27 +41,6 @@ float average_temperature(float current_temperature)
     controller.temperature_history[1] = controller.temperature_history[2];
     controller.temperature_history[2] = current_temperature;
     return (controller.temperature_history[0] + controller.temperature_history[1] + controller.temperature_history[2]) / 3.0;
-}
-
-float get_curve_value()
-{
-    controller.count_ref++;
-
-    printf("REFLOW: %d - %d", controller.count_ref, controller.count_ref / 60);
-
-    return (float)curva[controller.count_ref / 60][1];
-
-    // for (size_t i = 0; i < 10; i++)
-    // {
-    //     if (i == 9 && controller.count_ref >= 600)
-    //         return (float)curva[9][1];
-    //     if (controller.count_ref < curva[i + 1][0])
-    //     {
-    //         return (float)curva[i][1];
-    //     }
-    // }
-
-    // return curva[(int)controller.count_ref / 60][1];
 }
 
 void handle_command(int command)
@@ -98,6 +66,7 @@ void handle_command(int command)
         break;
     case CMD_REF_CURVE:
         printf("Reference: Curva\n");
+        loadReflowData();
         controller.ref_mode = 1;
         controller.count_ref = 0;
         send_mode();
@@ -140,7 +109,7 @@ void control()
     // Curva reflow
     else if (controller.ref_mode == 1)
     {
-        ref_curve_value = get_curve_value();
+        ref_curve_value = get_curve_value(&controller.count_ref);
         pid_atualiza_referencia(ref_curve_value);
         memcpy(&temperature_reference[7], &ref_curve_value, 4);
         write_uart(controller.uart_filestream, temperature_reference, 11);
@@ -217,7 +186,7 @@ void send_mode()
     write_uart(controller.uart_filestream, ref_mode, 8);
     int response;
     read_data(controller.uart_filestream, ref_mode, &response, 4);
-    printf("Reference: %d\n", response);
+    printf("Mode: %d\n", response);
 }
 
 void controller_routine()

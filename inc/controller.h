@@ -8,7 +8,6 @@ typedef struct CONTROLLER
     int ref_mode;
     float ref_value;
     int count_ref;
-    int count_alarm;
     int seconds;
     float temperature_history[3];
 } CONTROLLER;

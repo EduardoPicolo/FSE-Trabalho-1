@@ -17,6 +17,7 @@
 
 #include <wiringPi.h>
 #include <softPwm.h>
+#include "reflow_handler.h"
 
 int uart0;
 
@@ -31,7 +32,6 @@ void handle_sigint()
 
 int main(int argc, const char *argv[])
 {
-
     int mode;
 
     printf("Escolha o modo para a temperatura de referencia (TR):\n");
@@ -56,6 +56,7 @@ int main(int argc, const char *argv[])
     }
     else if (mode == 1)
     {
+        loadReflowData();
         set_mode(1);
     }
 
