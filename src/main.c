@@ -26,6 +26,12 @@ void handle_sigint()
 {
     set_system_state(0);
     send_status();
+    lcd_init();
+    ClrLcd();
+    lcdLoc(LINE1);
+    typeln("Sistema");
+    lcdLoc(LINE2);
+    typeln("Desligado");
     gpio_power_off();
     close_bme();
     close_uart(&uart0);
@@ -90,8 +96,6 @@ int main(int argc, const char *argv[])
         set_mode(1);
     }
 
-    set_system_state(1);
-
     init_uart(&uart0);
     init_gpio();
     init_bme();
@@ -99,6 +103,8 @@ int main(int argc, const char *argv[])
     signal(SIGINT, handle_sigint);
 
     dry_run();
+
+    set_system_state(1);
 
     printf("\nStart Controller\n");
     controller_routine();
