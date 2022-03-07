@@ -3,7 +3,6 @@
 
 #include <unistd.h>
 
-void openLogFile();
-void logger(float ti, float te, float tr, float cs);
+void logger(const char *filepath, float ti, float te, float tr, float cs);
 
 #endif

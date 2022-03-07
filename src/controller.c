@@ -9,6 +9,7 @@
 #include <wiringPi.h>
 #include <softPwm.h>
 
+#include "i2clcd.h"
 #include "controller.h"
 #include "uart.h"
 #include "dry_run.h"
@@ -107,7 +108,7 @@ void control()
         read_data(controller.uart_filestream, potenciometro_code, &potenciometro_value, 4);
         pid_atualiza_referencia(potenciometro_value);
         display_temperatures(internal_temperature, bme_data.temperature, potenciometro_value, controller.ref_mode);
-        logger(internal_temperature, bme_data.temperature, potenciometro_value, control_output);
+        logger("static/log_pot.csv", internal_temperature, bme_data.temperature, potenciometro_value, control_output);
     }
     // Curva reflow
     else if (controller.ref_mode == 1)
@@ -117,7 +118,7 @@ void control()
         memcpy(&temperature_reference[7], &ref_curve_value, 4);
         write_uart(controller.uart_filestream, temperature_reference, 11);
         display_temperatures(internal_temperature, bme_data.temperature, ref_curve_value, controller.ref_mode);
-        logger(internal_temperature, bme_data.temperature, ref_curve_value, control_output);
+        logger("static/log_reflow.csv", internal_temperature, bme_data.temperature, ref_curve_value, control_output);
     }
     // Terminal
     else if (controller.ref_mode == 2)
@@ -127,7 +128,7 @@ void control()
         memcpy(&temperature_reference[7], &temp, 4);
         write_uart(controller.uart_filestream, temperature_reference, 11);
         display_temperatures(internal_temperature, bme_data.temperature, temp, controller.ref_mode);
-        logger(internal_temperature, bme_data.temperature, temp, control_output);
+        // logger(internal_temperature, bme_data.temperature, temp, control_output);
     }
 
     if (control_output > 0)
@@ -198,6 +199,15 @@ void controller_routine()
 
     while (1)
     {
+        if (!controller.on_off_state)
+        {
+            lcd_init();
+            ClrLcd();
+            lcdLoc(LINE1);
+            typeln("Sistema");
+            lcdLoc(LINE2);
+            typeln("Desligado");
+        }
         control();
         get_command();
         usleep(750000);

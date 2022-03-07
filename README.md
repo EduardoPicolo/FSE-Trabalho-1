@@ -2,7 +2,6 @@
 
 Trabalho 1 da disciplina de Fundamentos de Sistemas Embarcados (2021/2)
 
-<!-- ![screenshot](screenshot.png) -->
 <p align="center">
   <img src="screenshot.png" width="850" height="auto" alt="InGame Image"/>
 </p>
@@ -52,4 +51,20 @@ No modo Curva Reflow o sistema irá atuar de acordo com a curva de temperatura p
 
 ## Experimento Potenciômetro
 
+<p align="center">
+  <img src="static/graph_pot.svg" width="850" height="auto" alt="InGame Image"/>
+</p>
+
+<p align="center">
+  <img src="static/signal_pot.svg" width="850" height="auto" alt="InGame Image"/>
+</p>
+
 ## Experimento Curva de Reflow
+
+<p align="center">
+  <img src="static/graph_reflow.svg" width="850" height="auto" alt="InGame Image"/>
+</p>
+
+<p align="center">
+  <img src="static/signal_reflow.svg" width="850" height="auto" alt="InGame Image"/>
+</p>

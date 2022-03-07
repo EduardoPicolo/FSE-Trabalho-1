@@ -6,20 +6,13 @@
 
 FILE *logfile = NULL;
 
-void openLogFile()
+void logger(const char *filepath, float ti, float te, float tr, float cs)
 {
-    if ((logfile = fopen("src/log.csv", "a")) == NULL)
+    if ((logfile = fopen(filepath, "a")) == NULL)
     {
         printf("Error opening log file");
-        // exit(1);
-    }
-}
-
-void logger(float ti, float te, float tr, float cs)
-{
-    openLogFile();
-    if (logfile == NULL)
         return;
+    }
 
     struct timeval tv;
     time_t t;
