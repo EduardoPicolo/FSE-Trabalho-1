@@ -5,7 +5,7 @@
 #include <fcntl.h>   //Used for UART
 #include <termios.h> //Used for UART
 
-#define MATRICULA 0x03, 0x01, 0x05, 0x01
+#define MATRICULA 0x03, 0x03, 0x03, 0x03
 
 #define CLIENT_CODE 0x00
 #define SERVER_CODE 0x01

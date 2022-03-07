@@ -23,8 +23,8 @@ int uart0;
 void handle_sigint()
 {
     power_off();
-    close_uart(&uart0);
     close_bme();
+    close_uart(&uart0);
     exit(0);
 }
 

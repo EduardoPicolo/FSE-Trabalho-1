@@ -15,7 +15,7 @@ struct PID
     double erro_anterior;
     double sinal_de_controle_MAX;
     double sinal_de_controle_MIN;
-} pid = {0, 0, 0, 0, 0, 0, 1.0, 0, 0, 0, 100.0, 100.0};
+} pid = {0, 0, 0, 0, 0, 0, 1.0, 0, 0, 0, 60, 30};
 
 typedef struct PID PID;
 
