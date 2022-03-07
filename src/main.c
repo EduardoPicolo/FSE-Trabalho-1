@@ -46,7 +46,6 @@ int main(int argc, const char *argv[])
         double tr;
         printf("Temperatura de referencia: ");
         scanf("%lf", &tr);
-        printf("INPUTED REFERENCE: %f\n", tr);
         pid_set_reference(tr);
         set_mode(2);
     }

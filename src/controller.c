@@ -120,7 +120,6 @@ void control()
     {
         float temp;
         temp = pid_get_reference();
-        printf("TERMINAL: TEMP REFERENCE: %f\n", temp);
         memcpy(&temperature_reference[7], &temp, 4);
         write_uart(controller.uart_filestream, temperature_reference, 11);
         display_temperatures(internal_temperature, bme_data.temperature, temp, controller.ref_mode);
